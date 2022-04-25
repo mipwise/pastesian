@@ -1,7 +1,7 @@
 # The pastesian problem
 
 *Author*: Luiz Suzana  
-*Date*: April 2022
+April 2022
 
 Welcome to my first project at the [Mip Go][Mip Go] training program from [Mip Wise][Mip Wise].
 
