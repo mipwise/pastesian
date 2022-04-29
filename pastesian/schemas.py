@@ -12,7 +12,8 @@ input_schema = PanDatFactory(
 # endregion
 
 # region USER PARAMETERS
-
+input_schema.add_parameter('Production Capacity', default_value='Ensure whole portions', number_allowed=False,
+                           strings_allowed=['Ensure whole portions', 'Portions can be fractional'])
 # endregion
 
 # region OUTPUT SCHEMA
