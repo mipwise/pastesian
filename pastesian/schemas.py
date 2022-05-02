@@ -12,8 +12,13 @@ input_schema = PanDatFactory(
 # endregion
 
 # region USER PARAMETERS
-input_schema.add_parameter('Production Capacity', default_value='Ensure whole portions', number_allowed=False,
-                           strings_allowed=['Ensure whole portions', 'Portions can be fractional'])
+# Production Capacity: upper bound for monthly production
+input_schema.add_parameter('Production Capacity', default_value=-1, number_allowed=True, strings_allowed=(),
+                           must_be_int=True, min=-1.0, inclusive_min=True)
+# Inventory Capacity: upper bound for monthly storage
+input_schema.add_parameter('Inventory Capacity', default_value=-1, number_allowed=True, strings_allowed=(),
+                           must_be_int=True, min=-1.0, inclusive_min=True)
+# When one of these parameters is -1, it's like we didn't have the respective capacity restriction
 # endregion
 
 # region OUTPUT SCHEMA
