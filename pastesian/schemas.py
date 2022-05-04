@@ -18,7 +18,12 @@ input_schema.add_parameter('Production Capacity', default_value=-1, number_allow
 # Inventory Capacity: upper bound for monthly storage
 input_schema.add_parameter('Inventory Capacity', default_value=-1, number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=-1.0, inclusive_min=True)
-# When one of these parameters is -1, it's like we didn't have the respective capacity restriction
+# When one of these capacity parameters is -1, it's like we didn't have the respective capacity restriction
+input_schema.add_parameter('Lasagnas To Be Left', default_value=0, number_allowed=True, strings_allowed=(),
+                           must_be_int=True, min=0.0, inclusive_min=True)  # Amount of lasagnas to be left in the
+# last period
+input_schema.add_parameter('Lasagnas To Start', default_value=50, number_allowed=True, strings_allowed=(),
+                           must_be_int=True, min=0.0, inclusive_min=True)  # Amount of lasagnas we start with
 # endregion
 
 # region OUTPUT SCHEMA
@@ -57,8 +62,12 @@ input_schema.set_data_type(table='costs', field='Production Cost', number_allowe
                            must_be_int=False, min=0.0, inclusive_min=True)
 input_schema.set_data_type(table='costs', field='Inventory Cost', number_allowed=True, strings_allowed=(),
                            must_be_int=False, min=0.0, inclusive_min=True)
-input_schema.add_foreign_key(native_table='costs', foreign_table='time_periods',
-                             mappings=('Period ID', 'Period ID'))
+input_schema.set_default_value(table='costs', field='Inventory Cost', default_value=0.00)
+# the above default value to inventory cost at costs table is to ensure that if the user doesn't want to have some
+# left amount of lasagnas at the end of horizon, then he/she also doesn't want to insert some value to the inventory
+# cost in the last period (which means the cost to storage from last period to next horizon, something we don't even
+# want to do in this case).
+input_schema.add_foreign_key(native_table='costs', foreign_table='time_periods', mappings=('Period ID', 'Period ID'))
 
 # endregion
 
