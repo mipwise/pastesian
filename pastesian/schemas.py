@@ -20,6 +20,8 @@ input_schema.add_parameter('Production Capacity', default_value=-1, number_allow
 # Inventory Capacity: upper bound for monthly storage
 input_schema.add_parameter('Inventory Capacity', default_value=-1, number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=-1.0, inclusive_min=True)
+# TODO: consider allowing production and inventory capacities to vary through periods
+
 # When one of these capacity parameters is -1, it's like we didn't have the respective capacity restriction
 input_schema.add_parameter('Lasagnas To Be Left', default_value=0, number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=0.0, inclusive_min=True)  # Amount of lasagnas to be left in the

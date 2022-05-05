@@ -83,12 +83,14 @@ def solve(dat):
         sln.production_flow = production_flow[['Period ID', 'Production Quantity', 'Inventory Quantity']]
 
         # populate costs table
-        dat.costs.merge(production_flow, on='Period ID', how='left')
-
-        prod_cost = pd.DataFrame(x_df['Production Quantity'] * dat.costs['Production Cost'], columns=['Production Cost'])
-        inv_cost = pd.DataFrame(s_df['Inventory Quantity'] * dat.costs['Inventory Cost'], columns=['Inventory Cost'])
-        sln.costs = pd.concat([dat.time_periods['Period ID'], prod_cost, inv_cost, pd.DataFrame(prod_cost + inv_cost,
-                              columns=['Total Cost'])])
+        prod_cost = dat.costs.merge(production_flow, on='Period ID', how='left')
+        prod_cost['Production Cost'] = prod_cost['Production Quantity'] * prod_cost['Production Cost']
+        prod_cost['Inventory Cost'] = prod_cost['Inventory Quantity'] * prod_cost['Inventory Cost']
+        prod_cost['Total Cost'] = prod_cost['Production Cost'] + prod_cost['Inventory Cost']
+        prod_cost = prod_cost.round({'Production Cost': 2, 'Inventory Cost': 2, 'Total Cost': 2})
+        prod_cost = prod_cost.astype({'Period ID': int, 'Production Cost': 'Float64', 'Inventory Cost': 'Float64',
+                                      'Total Cost': 'Float64'})
+        sln.costs = prod_cost[['Period ID', 'Production Cost', 'Inventory Cost', 'Total Cost']]
     # endregion
 
     return sln
