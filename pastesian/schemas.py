@@ -3,7 +3,7 @@ from ticdat import PanDatFactory
 # region INPUT SCHEMA
 input_schema = PanDatFactory(
     # table_name=[['Primary Key One', 'Primary Key Two', ...], ['Data Field One', 'Data Field Two', ...]]
-    parameters=[['Parameter'], ['Value']],
+    parameters=[['Name'], ['Value']],
     time_periods=[['Period ID'], ['Time Period']],
     demand=[['Period ID'], ['Demand']],
     costs=[['Period ID'], ['Production Cost', 'Inventory Cost']]
@@ -20,7 +20,7 @@ input_schema.add_parameter('Production Capacity', default_value=-1, number_allow
 # Inventory Capacity: upper bound for monthly storage
 input_schema.add_parameter('Inventory Capacity', default_value=-1, number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=-1.0, inclusive_min=True)
-# TODO: consider allowing production and inventory capacities to vary through periods
+# TODO: consider allowing production and inventory capacities to vary through periods, which would enter as input data
 
 # When one of these capacity parameters is -1, it's like we didn't have the respective capacity restriction
 input_schema.add_parameter('Lasagnas To Be Left', default_value=0, number_allowed=True, strings_allowed=(),
@@ -43,7 +43,7 @@ input_schema.set_data_type(table='time_periods', field='Period ID', number_allow
                            must_be_int=True, min=1.0, inclusive_min=True)
 # TODO: ensure 'Period ID' column will be like [1, 2, 3, 4, ...]
 input_schema.set_data_type(table='time_periods', field='Time Period', number_allowed=False, strings_allowed=(),
-                           datetime=True)
+                           datetime=True, nullable=True)
 
 # endregion
 
@@ -55,7 +55,7 @@ input_schema.set_data_type(table='demand', field='Demand', number_allowed=True, 
                            must_be_int=True, min=0.0, inclusive_min=True)
 input_schema.add_foreign_key(native_table='demand', foreign_table='time_periods',
                              mappings=('Period ID', 'Period ID'))
-
+input_schema.set_default_value(table='demand', field='Demand', default_value=0)
 # endregion
 
 # region costs table
