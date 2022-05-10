@@ -1,12 +1,10 @@
 from pastesian import input_schema, output_schema
 import pulp
 import pandas as pd
-from pastesian.utils import check_each_period_id_column
 
 
 def solve(dat):
     # region Prepare optimization parameters
-    # check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
     I = list(dat.time_periods['Period ID'])  # list like [1, 2, 3, ...] with periods' numbers
     d = dict(zip(dat.demand['Period ID'], dat.demand['Demand']))  # dict: {time_period: demand}
     pc = dict(zip(dat.costs['Period ID'], dat.costs['Production Cost']))  # dict: {time_period: production_cost}
