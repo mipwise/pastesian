@@ -1,16 +1,19 @@
 from pastesian import input_schema, output_schema
 import pulp
 import pandas as pd
+from pastesian.utils import check_each_period_id_column
 
 
 def solve(dat):
-    # Prepare optimization parameters
+    # region Prepare optimization parameters
+    # check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
     I = list(dat.time_periods['Period ID'])  # list like [1, 2, 3, ...] with periods' numbers
-    # TODO: verify that dat.time_periods['Period ID'] is like 1, 2, 3, 4, ...
     d = dict(zip(dat.demand['Period ID'], dat.demand['Demand']))  # dict: {time_period: demand}
     pc = dict(zip(dat.costs['Period ID'], dat.costs['Production Cost']))  # dict: {time_period: production_cost}
     ic = dict(zip(dat.costs['Period ID'], dat.costs['Inventory Cost']))  # dict: {time_period: inventory_cost}
     # TODO: think about tables possibly have different amount of Period ID
+
+    # endregion
 
     # region Build optimization model
     mdl = pulp.LpProblem('Pastesian', sense=pulp.LpMinimize)
@@ -32,7 +35,7 @@ def solve(dat):
     # In the last period, we use 'Lasagnas To Be Left' (default=0) parameter as storage quantity to be left to
     # the next horizon
     left_amount = parameters['Lasagnas To Be Left']
-    mdl.addConstraint(s[I[-1]] == left_amount, name=f'last_storage')
+    mdl.addConstraint(s[max(I)] == left_amount, name=f'last_storage')
     # endregion
 
     # region Capacity constraints
