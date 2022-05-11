@@ -11,8 +11,6 @@ input_schema = PanDatFactory(
 
 # endregion
 
-# TODO: ensure all tables have the same Period ID column
-
 # region USER PARAMETERS
 # Production Capacity: upper bound for monthly production
 input_schema.add_parameter('Production Capacity', default_value=-1, number_allowed=True, strings_allowed=(),
@@ -41,10 +39,9 @@ output_schema = PanDatFactory(
 # region time_periods table
 input_schema.set_data_type(table='time_periods', field='Period ID', number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=1.0, inclusive_min=True)
-# TODO: ensure 'Period ID' column will be like [1, 2, 3, 4, ...]
+
 input_schema.set_data_type(table='time_periods', field='Time Period', number_allowed=False, strings_allowed=(),
                            datetime=True, nullable=True)
-
 input_schema.add_foreign_key(native_table='time_periods', foreign_table='demand', mappings=('Period ID', 'Period ID'))
 input_schema.add_foreign_key(native_table='time_periods', foreign_table='costs', mappings=('Period ID', 'Period ID'))
 
@@ -53,7 +50,6 @@ input_schema.add_foreign_key(native_table='time_periods', foreign_table='costs',
 # region demand table
 input_schema.set_data_type(table='demand', field='Period ID', number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=1.0, inclusive_min=True)
-# TODO: ensure 'Period ID' column will be like [1, 2, 3, 4, ...]
 input_schema.set_data_type(table='demand', field='Demand', number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=0.0, inclusive_min=True)
 input_schema.add_foreign_key(native_table='demand', foreign_table='time_periods',
@@ -64,7 +60,6 @@ input_schema.set_default_value(table='demand', field='Demand', default_value=0)
 # region costs table
 input_schema.set_data_type(table='costs', field='Period ID', number_allowed=True, strings_allowed=(),
                            must_be_int=True, min=1.0, inclusive_min=True)
-# TODO: ensure 'Period ID' column will be like [1, 2, 3, 4, ...]
 input_schema.set_data_type(table='costs', field='Production Cost', number_allowed=True, strings_allowed=(),
                            must_be_int=False, min=0.0, inclusive_min=True)
 input_schema.set_data_type(table='costs', field='Inventory Cost', number_allowed=True, strings_allowed=(),
@@ -85,7 +80,6 @@ input_schema.add_foreign_key(native_table='costs', foreign_table='time_periods',
 # region production_flow table
 output_schema.set_data_type(table='production_flow', field='Period ID', number_allowed=True, strings_allowed=(),
                             must_be_int=True, min=1.0, inclusive_min=True)
-# TODO: ensure 'Period ID' column will be like [1, 2, 3, 4, ...]
 output_schema.set_data_type(table='production_flow', field='Production Quantity', number_allowed=True,
                             strings_allowed=(), must_be_int=False, min=0.0, inclusive_min=True)
 output_schema.set_data_type(table='production_flow', field='Inventory Quantity', number_allowed=True,
@@ -96,7 +90,6 @@ output_schema.set_data_type(table='production_flow', field='Inventory Quantity',
 # region costs table
 output_schema.set_data_type(table='costs', field='Period ID', number_allowed=True, strings_allowed=(),
                             must_be_int=True, min=1.0, inclusive_min=True)
-# TODO: ensure 'Period ID' column will be like [1, 2, 3, 4, ...]
 output_schema.set_data_type(table='costs', field='Production Cost', number_allowed=True,
                             strings_allowed=(), must_be_int=False, min=0.0, inclusive_min=True)
 output_schema.set_data_type(table='costs', field='Inventory Cost', number_allowed=True,
