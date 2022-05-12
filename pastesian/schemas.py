@@ -65,6 +65,8 @@ input_schema.set_data_type(table='costs', field='Production Cost', number_allowe
 input_schema.set_data_type(table='costs', field='Inventory Cost', number_allowed=True, strings_allowed=(),
                            must_be_int=False, min=0.0, inclusive_min=True)
 input_schema.set_default_value(table='costs', field='Inventory Cost', default_value=0.00)
+# TODO: this default_value at 'Inventory Cost' is temporary, fix it eventually because there seem to be no useful
+#  default value to production and inventory costs.
 # the above default value to inventory cost at costs table is to ensure that if the user doesn't want to have some
 # left amount of lasagnas at the end of horizon, then he/she also doesn't want to insert some value to the inventory
 # cost in the last period (which means the cost to storage from last period to next horizon, something we don't even

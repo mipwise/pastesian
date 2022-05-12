@@ -30,9 +30,9 @@ parameters_config = {
     'categories': dict(),
     'order': list(),
     'tooltips': {
-        'Production Capacity': "Maximum number of lasagnas that can be produced throughout each month. Set it "
+        'Production Capacity': "Maximum number of lasagnas that can be produced throughout each period. Set it "
                                "to -1 (default) when there isn't such maximum production",
-        'Inventory Capacity': "Maximum number of lasagnas that can be stored throughout each month. Set it "
+        'Inventory Capacity': "Maximum number of lasagnas that can be stored throughout each period. Set it "
                                "to -1 (default) when there isn't such maximum storage",
         'Lasagnas To Be Left': "Number of lasagnas expected at the end of the planning horizon, default=0",
         'Lasagnas To Start': "Number of lasagnas in the inventory at the beginning of the planning horizon, default=50"
