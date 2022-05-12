@@ -1,16 +1,18 @@
 from pastesian import input_schema, output_schema
 import pulp
 import pandas as pd
+from pastesian.utils import check_each_period_id_column
 
 
 def solve(dat):
     # region Prepare optimization parameters
+    check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
     I = list(dat.time_periods['Period ID'])  # list like [1, 2, 3, ...] with periods' numbers
     d = dict(zip(dat.demand['Period ID'], dat.demand['Demand']))  # dict: {time_period: demand}
     pc = dict(zip(dat.costs['Period ID'], dat.costs['Production Cost']))  # dict: {time_period: production_cost}
     ic = dict(zip(dat.costs['Period ID'], dat.costs['Inventory Cost']))  # dict: {time_period: inventory_cost}
     # TODO: think about tables possibly have different amount of Period ID
-
+    # TODO: test the main engine with unordered data
     # endregion
 
     # region Build optimization model
@@ -71,6 +73,8 @@ def solve(dat):
     sln = output_schema.PanDat()
 
     # region Populate output schema
+    # TODO: ensure output tables have ordered rows by 'Period ID'. For example, even though input data may come with
+    #  unordered rows, it's more convenient if we write the output ordered.
     if x_sol:
         x_df = pd.DataFrame(x_sol, columns=['Period ID', 'Production Quantity'])
         s_df = pd.DataFrame(s_sol, columns=['Period ID', 'Inventory Quantity'])
