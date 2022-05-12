@@ -13,25 +13,25 @@ def check_each_period_id_column(dat):
 
     :return:
     """
-    field = 'Period ID'
+    field_name = 'Period ID'
     for table_name in input_schema.all_tables:
         table = dat.__getattribute__(table_name)
 
-        # if hasattr(table, field):
+        # if hasattr(table, field_name):
         #     pass
 
-        if field in table.columns:
-            I = list(table[field])
+        if field_name in table.columns:
+            I = list(table[field_name])
             I.sort()
             if not I[0] == 1 or not I[-1] == len(I):
-                error_msg = f"'{field}' column at '{table_name}' table must have all integers from 1 to the biggest " \
-                            f"period index, not necessarily ordered though."
+                error_msg = f"'{field_name}' column at '{table_name}' table must have all integers from 1 to the " \
+                            f"biggest period index, not necessarily ordered though."
                 raise ValueError(error_msg)
 
 
 def check_period_id_matching():
     """
-    Check if all tables share the same 'Period ID' column, except possibly
+    Check if all tables share the same 'Period ID' column
 
     :return:
     """

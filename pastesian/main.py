@@ -12,7 +12,7 @@ def solve(dat):
     pc = dict(zip(dat.costs['Period ID'], dat.costs['Production Cost']))  # dict: {time_period: production_cost}
     ic = dict(zip(dat.costs['Period ID'], dat.costs['Inventory Cost']))  # dict: {time_period: inventory_cost}
     # TODO: think about tables possibly have different amount of Period ID
-
+    # TODO: test the main engine with unordered data
     # endregion
 
     # region Build optimization model
@@ -73,6 +73,8 @@ def solve(dat):
     sln = output_schema.PanDat()
 
     # region Populate output schema
+    # TODO: ensure output tables have ordered rows by 'Period ID'. For example, even though input data may come with
+    #  unordered rows, it's more convenient if we write the output ordered.
     if x_sol:
         x_df = pd.DataFrame(x_sol, columns=['Period ID', 'Production Quantity'])
         s_df = pd.DataFrame(s_sol, columns=['Period ID', 'Inventory Quantity'])

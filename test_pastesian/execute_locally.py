@@ -9,7 +9,6 @@ dat = input_schema.csv.create_pan_dat(input_path)
 
 # Checking data integrity and fixing some possible related issues
 local_data_integrity_check(dat)
-dat = local_fix_bad_data(dat)
 
 # Optimize and populate the output schema's tables
 sln = solve(dat)
