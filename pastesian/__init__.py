@@ -1,7 +1,7 @@
 __version__ = "0.1.2"
 from pastesian.schemas import input_schema, output_schema
 from pastesian.action_example import update_demand
-# from pastesian.action_local_data_integrity import local_data_integrity_check
+from pastesian.action_local_data_integrity import local_data_integrity_check
 from pastesian.main import solve
 
 input_tables_config = {
