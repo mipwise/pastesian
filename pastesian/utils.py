@@ -12,6 +12,8 @@ def check_each_period_id_column(dat):
     :param dat: PanDat object containing the input data, accordingly to the input_schema.
 
     :return:
+
+    The function raises ValueError when an invalid 'Period ID' column is found.
     """
     field_name = 'Period ID'
     for table_name in input_schema.all_tables:
