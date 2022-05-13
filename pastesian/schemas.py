@@ -42,8 +42,6 @@ input_schema.set_data_type(table='time_periods', field='Period ID', number_allow
 
 input_schema.set_data_type(table='time_periods', field='Time Period', number_allowed=False, strings_allowed=(),
                            datetime=True, nullable=True)
-input_schema.add_foreign_key(native_table='time_periods', foreign_table='demand', mappings=('Period ID', 'Period ID'))
-input_schema.add_foreign_key(native_table='time_periods', foreign_table='costs', mappings=('Period ID', 'Period ID'))
 
 # endregion
 
