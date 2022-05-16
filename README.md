@@ -28,7 +28,9 @@ Lasagnas are prepared and immediately frozen for distribution. They have some fr
 
 Based on previous years’ selling, Pastesian expects demand of 200, 350, 150, and 250 lasagnas for months 1, 2, 3, and 4, respectively, which must be met exactly. Currently, Pastesian has only 50 lasagnas in inventory.
 
-One tricky thing is that labor cost is going to increase over the next months because the factory is located in a tourist town where there are lots of temporary job opportunities during high season. This translates into a variable production cost of $5.50, $7.20, $8.80, and $10.90 dollars per lasagna for months 1, 2, 3, and 4, respectively.
+One tricky thing is that labor cost is going to increase over the next months because the factory is located in a 
+tourist town where there are lots of temporary job opportunities during high season. This translates into a variable 
+production cost of $ 5.50, $ 7.20, $ 8.80, and $ 10.90 dollars per lasagna for months 1, 2, 3, and 4, respectively.
 
 In addition, electricity charges also vary throughout the season. As a result, the cost for keeping one lasagna in 
 inventory from month 1 to 2 is $ 1.30, from month 2 to 3 is $ 1.95, from month 3 to 4 is $ 2.20, and from month 4 to 
