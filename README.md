@@ -3,17 +3,9 @@
 *Author*: Luiz Suzana  
 April 2022
 
-This solution is the first project developed by the author as part of his journey at the [Mip Go][Mip Go] training 
-program 
-from 
-[Mip Wise][Mip Wise].
+This repository contains the solution to the Pastesian problem, which was the first project developed by the author as part of his journey with the [Mip Go][Mip Go] training program from [Mip Wise][Mip Wise].
 
-
-It is going to solve the *pastesian* problem, whose basic statement is described in details [here][statement link], 
-using the 
-Mip Go 
-framework, that is, by creating a tidy, tested and safe python package which may easily be deployed as a web 
-application on [Mip Hub][mip hub], which is Mip Wise's app builder platform.
+The solution was developed by following the framework proposed in Mip Go, that is, by creating a Python package that is tidy, tested, and safe and that can be easily deployed as a web application on [Mip Hub][mip hub] (the Mip Wise's app builder platform).
 
 - Problem's basic statement: https://www.mipwise.com/use-cases/pastesian
 - Mathematical formulation: [docs]
