@@ -1,0 +1,10 @@
+Table Name,Field Name,Field 1,Field 2
+test_ticdat,Data1,150.0,100.0
+test_ticdat,Data1,-3.0,-30.0
+test_ticdat,Data1,200.1,50.0
+test_ticdat,Data2,-3.0,-30.0
+demand,Demand,3.0,
+demand,Demand,8.0,
+costs,Inventory Cost,4.0,
+costs,Inventory Cost,4.0,
+costs,Inventory Cost,4.0,
