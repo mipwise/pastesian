@@ -3,6 +3,8 @@ from pastesian.schemas import input_schema, output_schema
 from pastesian.action_example import update_demand
 from pastesian.main import solve
 
+__all__ = ['input_schema', 'output_schema', 'update_demand', 'solve']
+
 input_tables_config = {
     'hidden_tables': ['parameters'],
     'categories': dict(),
