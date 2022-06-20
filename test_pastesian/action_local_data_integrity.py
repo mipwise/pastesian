@@ -5,11 +5,17 @@ def local_data_integrity_check(dat):
     """
     Checks possible bad data caught by ticdat.
 
-    :param dat: a PanDat object containing the data, usually the input data.
-    :return:
-
     The function prints on console in a human-readable way the data issues caught by ticdat through the PanDatFactory
     methods find_foreign_key_failures, find_duplicates, find_data_row_failures and find_data_type_failures.
+
+    Parameters
+    ----------
+    dat : PanDat
+        A PanDat object containing the data, usually the input data.
+
+    Returns
+    -------
+
     """
 
     # Foreign Key Failures
@@ -43,23 +49,3 @@ def local_data_integrity_check(dat):
         print(key)
         print(value)
         print()
-
-
-def local_fix_bad_data(dat):
-    """
-    Fix data type failures caught by ticdat.
-
-    :param dat: a PanDat object containing the data, usually input data.
-    :return: dat_fixed: a PanDat object built from dat fixing some data issues.
-
-    To be more precise, the function performs two actions in order to build dat_fixed:
-        1) changes any problem with data type values (caught by find_data_type_failures) to the default values (if they
-        were set in corresponding schema - input or output). Note that not just Null/NaN values will be changed,
-        but also float values where integer was expected, or negative values where positive was expected, and so on.
-        2) remove duplicate rows, except for the first occurrence.
-    """
-
-    dat_fixed = input_schema.replace_data_type_failures(dat)
-    return dat_fixed
-
-# TODO: can we remove duplicate rows with ticdat? If not, change the documentation above.
