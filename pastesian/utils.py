@@ -11,7 +11,7 @@ def check_each_period_id_column(dat):
 
     :param dat: PanDat object containing the input data, accordingly to the input_schema.
 
-    :return:
+    :return: None
 
     The function raises ValueError when an invalid 'Period ID' column is found.
     """
@@ -35,7 +35,7 @@ def check_period_id_matching():
     """
     Check if all tables share the same 'Period ID' column
 
-    :return:
+    :return: None
     """
 
     pass
