@@ -4,12 +4,14 @@ from test_pastesian.action_local_data_integrity import local_data_integrity_chec
 
 # Creating "dat" object, containing all input data
 input_path = "data/inputs"
-output_path = "data/outputs"
 dat = input_schema.csv.create_pan_dat(input_path)
 
-# Checking data integrity and fixing some possible related issues
+# Checking data integrity
 local_data_integrity_check(dat)
 
-# Optimize and populate the output schema's tables
+# Optimize
 sln = solve(dat)
+
+# Populate the output schema's tables
+output_path = "data/outputs"
 output_schema.csv.write_directory(sln, output_path)
