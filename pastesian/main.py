@@ -61,12 +61,12 @@ def solve(dat):
 
     Parameters
     ----------
-    dat: PanDat
+    dat : PanDat
         PanDat object which is compatible with the input_schema and contains the input data.
 
     Returns
     -------
-    sln: PanDat
+    sln : PanDat
         A PanDat object containing the output data, compatible with the output schema.
     """
     d, pc, ic, I = create_optimization_parameters(dat)
