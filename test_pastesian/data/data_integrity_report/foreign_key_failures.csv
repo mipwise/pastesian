@@ -1,3 +1,1 @@
 Native Table,Foreign Table,Mapping,Field 1,Field 2
-demand,time_periods,"('Period ID', 'Period ID')",8,
-costs,time_periods,"('Period ID', 'Period ID')",8,
