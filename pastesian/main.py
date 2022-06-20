@@ -4,15 +4,31 @@ import pandas as pd
 from pastesian.utils import check_each_period_id_column
 
 
-def solve(dat):
+def create_optimization_parameters(dat):
     """
-    Main function of pastesian, from the input data it optimizes the system and return output tables.
+    Reads data from PanDat object and creates optimization parameters.
 
-    :param dat: PanDat object containing the input data.
+    The function also checks two data integrity issues: each 'Period ID' column must be valid (integer numbers from 1
+    to the maximum) and 'costs' and 'demand' tables must have the same 'Period ID' column, which will be used to
+    create the parameter "I".
 
-    :return: sln: PanDat object containing the output data.
+    Parameters
+    ----------
+    dat : PanDat
+        PanDat object which is compatible with the input_schema and contains the input data. It will be used to
+        create the optimization parameters.
+
+    Returns
+    -------
+    d : dict
+        A dictionary structured as {period_id: demand}
+    pc : dict
+        A dictionary structured as {period_id: production_cost}
+    ic : dict
+        A dictionary structured as {period_id: inventory_cost}
+    I : list
+        A list containing the 'Period ID' values
     """
-    # region Prepare optimization parameters
     check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
 
     d = dict(zip(dat.demand['Period ID'], dat.demand['Demand']))  # dict: {period_id: demand}
@@ -36,7 +52,24 @@ def solve(dat):
     # could also have used dat.costs['Period ID'] since the above verification ensure they're the same, except possibly
     # for ordering.
 
-    # endregion
+    return d, pc, ic, I
+
+
+def solve(dat):
+    """
+    Main function of pastesian, from the input data it optimizes the system and return a PanDat object.
+
+    Parameters
+    ----------
+    dat: PanDat
+        PanDat object which is compatible with the input_schema and contains the input data.
+
+    Returns
+    -------
+    sln: PanDat
+        A PanDat object containing the output data, compatible with the output schema.
+    """
+    d, pc, ic, I = create_optimization_parameters(dat)
 
     # region Build optimization model
     mdl = pulp.LpProblem('Pastesian', sense=pulp.LpMinimize)
@@ -62,7 +95,6 @@ def solve(dat):
     # endregion
 
     # region Capacity constraints
-    # TODO: think about varying capacities through periods. They should come with input data
     prod_capacity = parameters['Production Capacity']
     if prod_capacity != -1:
         for i in I:
