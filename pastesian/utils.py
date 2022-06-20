@@ -29,13 +29,3 @@ def check_each_period_id_column(dat):
                 error_msg = f"'{field_name}' column at '{table_name}' table must have all integers from 1 to the " \
                             f"biggest period index, not necessarily ordered though."
                 raise ValueError(error_msg)
-
-
-def check_period_id_matching():
-    """
-    Check if all tables share the same 'Period ID' column
-
-    :return: None
-    """
-
-    pass
