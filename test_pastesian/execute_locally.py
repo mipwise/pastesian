@@ -1,6 +1,6 @@
 from pastesian import input_schema, output_schema
 from pastesian import solve
-from test_pastesian.action_local_data_integrity import local_data_integrity_check, local_fix_bad_data
+from test_pastesian.action_local_data_integrity import local_data_integrity_check
 import os
 
 # Creating "dat" object, containing all input data
