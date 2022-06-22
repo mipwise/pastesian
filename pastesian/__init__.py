@@ -1,9 +1,9 @@
 __version__ = "0.1.3"
 from pastesian.schemas import input_schema, output_schema
-from pastesian.action_example import update_demand
+from pastesian.action_update_demand import action_update_demand
 from pastesian.main import solve
 
-__all__ = ['input_schema', 'output_schema', 'update_demand', 'solve']
+__all__ = ['input_schema', 'output_schema', 'action_update_demand', 'solve']
 
 input_tables_config = {
     'hidden_tables': ['parameters'],

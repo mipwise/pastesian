@@ -4,7 +4,7 @@ This is just an example of input action. It updates the demand using as multipli
 from pastesian import input_schema
 
 
-def update_demand(dat):
+def action_update_demand(dat):
     """
     Update demand from input data using as multiplier the production capacity parameter.
 
