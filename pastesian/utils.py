@@ -9,11 +9,19 @@ def check_each_period_id_column(dat):
     Examples: I = [1, 4, 7, 5, 6, 3, 2] is a valid 'Period ID' column, while I = [3, 5, 4, 1] is not because number 2
     is missing in the latter.
 
-    :param dat: PanDat object containing the input data, accordingly to the input_schema.
+    Parameters
+    ----------
+    dat : PanDat
+        A PanDat object containing the input data, accordingly to the input_schema.
 
-    :return: None
+    Returns
+    -------
+    None
 
-    The function raises ValueError when an invalid 'Period ID' column is found.
+    Raises
+    ------
+    ValueError
+        When an invalid 'Period ID' column is found, reporting table and field names.
     """
     field_name = 'Period ID'
     for table_name in input_schema.all_tables:
@@ -27,5 +35,5 @@ def check_each_period_id_column(dat):
             I.sort()
             if not I[0] == 1 or not I[-1] == len(I):
                 error_msg = f"'{field_name}' column at '{table_name}' table must have all integers from 1 to the " \
-                            f"biggest period index, not necessarily ordered though."
+                            f"biggest period index, not necessarily ordered."
                 raise ValueError(error_msg)
