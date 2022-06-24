@@ -15,6 +15,7 @@ def local_data_integrity_check(dat):
 
     Returns
     -------
+    None
 
     """
 
