@@ -6,7 +6,7 @@ from pastesian.utils import check_each_period_id_column
 
 def create_optimization_parameters(dat):
     """
-    Reads data from PanDat object and creates optimization parameters.
+    Reads data from PanDat object (containing the input data) and creates optimization parameters.
 
     The function also checks two data integrity issues: each 'Period ID' column must be valid (integer numbers from 1
     to the maximum) and 'costs' and 'demand' tables must have the same 'Period ID' column, which will be used to
@@ -28,6 +28,13 @@ def create_optimization_parameters(dat):
         A dictionary structured as {period_id: inventory_cost}
     I : list
         A list containing the 'Period ID' values
+
+    Raises
+    ------
+    ValueError
+        When an invalid 'Period ID' column is found, reporting table and field names. This error may be raised by the
+        check_each_period_id_column function. This error can also be raised if 'demand' and 'costs' tables have
+        different 'Period ID' columns, regardless of order.
     """
     check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
 
@@ -57,7 +64,7 @@ def create_optimization_parameters(dat):
 
 def solve(dat):
     """
-    Main function of pastesian, from the input data it optimizes the system and return a PanDat object.
+    Main function of pastesian, from the input data it optimizes the system and returns a PanDat object.
 
     Parameters
     ----------

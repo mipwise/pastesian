@@ -6,8 +6,8 @@ from pastesian import input_schema
 
 def action_update_demand(dat):
     """
-    Update 'Demand' field of demand.csv table from input data (dat parameter) using as multiplier the production
-    capacity parameter (as mentioned, just an example).
+    Update 'Demand' field of demand.csv table from input data (dat parameter) using as multiplier the 'Production
+    Capacity' parameter (as mentioned, just an example).
 
     Parameters
     ----------
