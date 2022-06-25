@@ -1,3 +1,13 @@
+"""
+Module to run unit tests for pastesian package.
+
+Commands for the command-line:
+
+- coverage run <test_file.py>
+- coverage report
+- coverage html
+"""
+
 from pastesian import action_update_demand, solve, input_schema
 from pastesian.utils import check_each_period_id_column
 from pastesian.main import create_optimization_parameters
@@ -21,7 +31,20 @@ class TestPastesian(unittest.TestCase):
         self.assertEqual(1, 1)
 
     def test_action_update_demand(self):
-        pass
+        # Safe operation
+        demand_copy = self.dat.demand.copy()
+        multiplier = -1  # default value for "Production Capacity", which is used in action_update_demand
+        demand_copy['Demand'] = demand_copy['Demand'] * multiplier
+
+        # Operation to test
+        self.dat = action_update_demand(self.dat)
+
+        num_rows = demand_copy.shape[0]
+        for index in range(num_rows):
+            action_output = self.dat.demand.at[index, 'Demand']
+            expected_output = demand_copy.at[index, 'Demand']
+            self.assertTrue(isclose(action_output, expected_output, rel_tol=1e-2),
+                            msg=f'action: {action_output}, expected: {expected_output}')
 
     def test_check_each_period_id_column(self):
         # Original good demand.csv
@@ -40,7 +63,7 @@ class TestPastesian(unittest.TestCase):
 
         # We don't need a Bad PanDat object case, because when we call the check_each_period_id_column function,
         # we have already created the PanDat object through input_schema.csv.create_pan_dat (or similar to xls file)
-        # sho that TicDat would have already raised error for bad PanDat
+        # so that TicDat would have already raised error for bad PanDat
 
 
 if __name__ == '__main__':
