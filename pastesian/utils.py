@@ -21,19 +21,24 @@ def check_each_period_id_column(dat):
     Raises
     ------
     ValueError
-        When an invalid 'Period ID' column is found, reporting table and field names.
+        It's raised in two situations: 1) when some 'Period ID' column with non-integer values is found; when an invalid
+        'Period ID' column is found, that is, some 'Period ID' column containing missing value(s). It reports table and
+        field names in the error message.
+
     """
     field_name = 'Period ID'
     for table_name in input_schema.all_tables:
         table = dat.__getattribute__(table_name)
-
-        # if hasattr(table, field_name):
-        #     pass
-
         if field_name in table.columns:
+            # Check for list of integer values
             I = list(table[field_name])
+            if not all(isinstance(item, int) for item in I):
+                raise ValueError(f"{table_name}['{field_name}'] field only accepts integer values!")
+
+            # Check if there is any missing value
             I.sort()
-            if not I[0] == 1 or not I[-1] == len(I):
-                error_msg = f"'{field_name}' column at '{table_name}' table must have all integers from 1 to the " \
-                            f"biggest period index, not necessarily ordered."
-                raise ValueError(error_msg)
+            aux_list = list(range(1, len(I)+1))  # list from 1 to len(I)
+            if not I == aux_list:
+                raise ValueError(f"{table_name}['{field_name}'] field must have all integers from 1 to {len(I)}, "
+                                 f"not necessarily ordered.")
+
