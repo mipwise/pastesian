@@ -1,4 +1,4 @@
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 from pastesian.schemas import input_schema, output_schema
 from pastesian.action_update_demand import action_update_demand
 from pastesian.main import solve
