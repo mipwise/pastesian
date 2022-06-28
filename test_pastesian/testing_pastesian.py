@@ -15,11 +15,16 @@ import unittest
 from math import isclose
 import os
 import pandas as pd
+import inspect
+
+
+def _this_directory():
+    return os.path.dirname(os.path.realpath(os.path.abspath(inspect.getsourcefile(_this_directory))))
 
 
 class TestPastesian(unittest.TestCase):
     period_id_field_name = 'Period ID'
-    input_path = os.path.join(os.path.dirname(__file__), "data/inputs")
+    input_path = os.path.join(_this_directory(), "data/inputs")
 
     @classmethod
     def setUp(cls) -> None:
@@ -61,7 +66,19 @@ class TestPastesian(unittest.TestCase):
             d, pc, ic, I = create_optimization_parameters(dat3)
 
     def test_main_solve(self):
-        self.assertEqual(1, 1)
+        # Test output data
+        sln = solve(self.dat)
+
+        # Expected output data
+        production_flow_expected = pd.read_csv(os.path.join(_this_directory(), "data/outputs/production_flow.csv"))
+        costs_expected = pd.read_csv(os.path.join(_this_directory(), "data/outputs/costs.csv"))
+
+        # Testing
+        self.assertIsNone(pd.testing.assert_frame_equal(sln.production_flow, production_flow_expected,
+                                                        check_dtype=False, rtol=1.0e-5, atol=1.0e-8))
+        self.assertIsNone(pd.testing.assert_frame_equal(sln.costs, costs_expected, check_dtype=False, rtol=1.0e-5,
+                                                        atol=1.0e-8))
+
 
     def test_action_update_demand(self):
         # Safe operation
