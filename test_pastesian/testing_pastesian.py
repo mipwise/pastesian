@@ -79,7 +79,6 @@ class TestPastesian(unittest.TestCase):
         self.assertIsNone(pd.testing.assert_frame_equal(sln.costs, costs_expected, check_dtype=False, rtol=1.0e-5,
                                                         atol=1.0e-8))
 
-
     def test_action_update_demand(self):
         # Safe operation
         demand_copy = self.dat.demand.copy()
