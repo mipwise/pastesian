@@ -80,8 +80,8 @@ def solve(dat):
 
     # region Build optimization model
     mdl = pulp.LpProblem('Pastesian', sense=pulp.LpMinimize)
-    x = pulp.LpVariable.dicts(indexs=I, cat=pulp.LpContinuous, lowBound=0.0, name='x')  # Production quantities
-    s = pulp.LpVariable.dicts(indexs=I, cat=pulp.LpContinuous, lowBound=0.0, name='s')  # Storage quantities
+    x = pulp.LpVariable.dicts(indices=I, cat=pulp.LpContinuous, lowBound=0.0, name='x')  # Production quantities
+    s = pulp.LpVariable.dicts(indices=I, cat=pulp.LpContinuous, lowBound=0.0, name='s')  # Storage quantities
 
     parameters = input_schema.create_full_parameters_dict(dat)
 
