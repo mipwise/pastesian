@@ -148,8 +148,6 @@ def solve(dat):
         production_flow.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID', more
         # convenient for retrieving
 
-        # production_flow = production_flow.merge(dat.time_periods[['Period ID', 'Time Period']], on='Period ID',
-        #                                         how='left')
         production_flow = production_flow.astype({'Period ID': int, 'Production Quantity': 'Float64',
                                                   'Inventory Quantity': 'Float64'})
         sln.production_flow = production_flow[['Period ID', 'Production Quantity', 'Inventory Quantity']]
