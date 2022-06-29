@@ -8,9 +8,8 @@ def create_optimization_parameters(dat):
     """
     Reads data from PanDat object (containing the input data) and creates optimization parameters.
 
-    The function also checks two data integrity issues: each 'Period ID' column must be valid (integer numbers from 1
-    to the maximum) and 'costs' and 'demand' tables must have the same 'Period ID' column, which will be used to
-    create the parameter "I".
+    The function also checks one data integrity issue: 'costs' and 'demand' tables must have the same 'Period ID'
+    column, which will be used to create the parameter "I".
 
     Parameters
     ----------
@@ -32,12 +31,8 @@ def create_optimization_parameters(dat):
     Raises
     ------
     ValueError
-        When an invalid 'Period ID' column is found, reporting table and field names. This error may be raised by the
-        check_each_period_id_column function. This error can also be raised if 'demand' and 'costs' tables have
-        different 'Period ID' columns, regardless of order.
+        When 'demand' and 'costs' tables from dat object have different 'Period ID' columns, regardless of order.
     """
-    check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
-
     d = dict(zip(dat.demand['Period ID'], dat.demand['Demand']))  # dict: {period_id: demand}
     pc = dict(zip(dat.costs['Period ID'], dat.costs['Production Cost']))  # dict: {period_id: production_cost}
     ic = dict(zip(dat.costs['Period ID'], dat.costs['Inventory Cost']))  # dict: {period_id: inventory_cost}
@@ -75,7 +70,16 @@ def solve(dat):
     -------
     sln : PanDat
         A PanDat object containing the output data, compatible with the output schema.
+
+    Raises
+    ------
+    ValueError
+        Two possible cases: 1) when an invalid 'Period ID' column is found, that is, when one table from dat object (
+        input data) contains a 'Period ID' column with non-integer values or missing integer values, accordingly to
+        the check_each_period_id_column function; 2) when 'demand' and 'costs' tables from dat object have different
+        'Period ID' columns, regardless of order, accordingly to create_optimization_parameters function.
     """
+    check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
     d, pc, ic, I = create_optimization_parameters(dat)
 
     # region Build optimization model
