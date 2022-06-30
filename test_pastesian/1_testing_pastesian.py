@@ -33,12 +33,8 @@ class TestPastesian(unittest.TestCase):
         cls.dat = input_schema.json.create_pan_dat(cls.input_data_path)
         cls.sln = output_schema.json.create_pan_dat(cls.output_data_path)
 
-    def test_local_data_integrity_check(self):
-        # TODO: print data integrity checks, and then make asserts as mip_me does
-        pass
-
     def test_create_optimization_parameters(self):
-        # Original data set
+        # Sample 1: original data set
         d, pc, ic, I = create_optimization_parameters(self.dat)
         I.sort()
 
@@ -99,21 +95,21 @@ class TestPastesian(unittest.TestCase):
                                                         rtol=1.0e-5, atol=1.0e-8))
 
     def test_check_each_period_id_column(self):
-        # Original good demand.csv
+        # Sample 1: original good demand.csv
         self.assertIsNone(check_each_period_id_column(self.dat))
 
-        # Sample 1: modified data with non-integers on demand['Period ID']
-        dat1 = input_schema.copy_pan_dat(self.dat)
-        dat1.demand[self.period_id_field_name] = dat1.demand[self.period_id_field_name] * 1.532
-        with self.assertRaises(ValueError):
-            check_each_period_id_column(dat1)
-
-        # Sample 2: modified data with integer missing values on demand['Period ID']
+        # Sample 2: modified data with non-integers on demand['Period ID']
         dat2 = input_schema.copy_pan_dat(self.dat)
-        dat2.demand.drop(0, axis=0, inplace=True)  # remove first row
+        dat2.demand[self.period_id_field_name] = dat2.demand[self.period_id_field_name] * 1.532
         with self.assertRaises(ValueError):
             check_each_period_id_column(dat2)
 
+        # Sample 3: modified data with integer missing values on demand['Period ID']
+        dat3 = input_schema.copy_pan_dat(self.dat)
+        dat3.demand.drop(0, axis=0, inplace=True)  # remove first row
+        with self.assertRaises(ValueError):
+            check_each_period_id_column(dat3)
+
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)
