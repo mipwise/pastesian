@@ -1,12 +1,12 @@
 """
-Module to run unit tests for pastesian package, using data from '1' prefix inside test_pastesian/data/testing_data,
-i.e., the input data to these tests is 1_input.json and the output is 1_output.json
+Module to run unit tests for pastesian package (which requires the installation of the `unittest` package).
 
-To run this in the command line, use "python -m unittest 1_testing_pastesian.py", or alternatively to get reports on
-how much of the code from pastesian package has been tested, use the 'coverage' package through these three commands:
-- coverage run 1_testing_pastesian.py
-- coverage report
-- coverage html
+To run this in the command-line, use `python -m unittest test_pastesian.py`.
+Alternatively, to get reports on how much of the code has been covered, use the `coverage` package through these
+three commands (which requires the installation of the `coverage` package):
+- `coverage run test_pastesian.py`
+- `coverage report`
+- `coverage html`
 """
 
 from pastesian import action_update_demand, solve, input_schema, output_schema
@@ -54,7 +54,7 @@ class TestPastesian(unittest.TestCase):
         demand_copy = pd.concat([demand_copy, pd.DataFrame([[5, 200]], columns=['Period ID', 'Demand'])])  # add new row
         dat2.demand = demand_copy  # update 'demand' table in dat2 PanDat object
         with self.assertRaises(ValueError):
-            d, pc, ic, I = create_optimization_parameters(dat2)
+            create_optimization_parameters(dat2)
 
         # Sample 3: costs['Period ID'] with more entries than demand['Period ID'], expected ValueError
         dat3 = input_schema.copy_pan_dat(self.dat)  # copy PanDat object
@@ -65,7 +65,7 @@ class TestPastesian(unittest.TestCase):
         ])  # add new row
         dat3.costs = costs_copy  # update 'costs' table in dat3 PanDat object
         with self.assertRaises(ValueError):
-            d, pc, ic, I = create_optimization_parameters(dat3)
+            create_optimization_parameters(dat3)
 
     def test_main_solve(self):
         # Test output data
