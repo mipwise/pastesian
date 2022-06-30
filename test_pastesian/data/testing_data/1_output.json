@@ -1,0 +1,65 @@
+{
+  "costs": {
+    "columns": [
+      "Period ID",
+      "Production Cost",
+      "Inventory Cost",
+      "Total Cost"
+    ],
+    "data": [
+      [
+        1,
+        3575.0,
+        650.0,
+        4225.0
+      ],
+      [
+        2,
+        0.0,
+        292.5,
+        292.5
+      ],
+      [
+        3,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        4,
+        2725.0,
+        0.0,
+        2725.0
+      ]
+    ]
+  },
+  "production_flow": {
+    "columns": [
+      "Period ID",
+      "Production Quantity",
+      "Inventory Quantity"
+    ],
+    "data": [
+      [
+        1,
+        650.0,
+        500.0
+      ],
+      [
+        2,
+        0.0,
+        150.0
+      ],
+      [
+        3,
+        0.0,
+        0.0
+      ],
+      [
+        4,
+        250.0,
+        0.0
+      ]
+    ]
+  }
+}
