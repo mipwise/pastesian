@@ -57,6 +57,38 @@ def create_optimization_parameters(dat):
     return d, pc, ic, I
 
 
+def populate_output_schema(x_sol, s_sol, dat):
+    sln = output_schema.PanDat()
+    if x_sol:
+        x_df = pd.DataFrame(x_sol, columns=['Period ID', 'Production Quantity'])
+        s_df = pd.DataFrame(s_sol, columns=['Period ID', 'Inventory Quantity'])
+
+        # Ordering the above DataFrames by increasing 'Period ID' number, more convenient for retrieving
+        x_df.sort_values(axis=0, by='Period ID', inplace=True)
+        s_df.sort_values(axis=0, by='Period ID', inplace=True)
+
+        # populate production_flow table
+        production_flow = x_df.merge(s_df, on='Period ID', how='right')
+        production_flow.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID', more
+        # convenient for retrieving
+
+        production_flow = production_flow.astype({'Period ID': int, 'Production Quantity': 'Float64',
+                                                  'Inventory Quantity': 'Float64'})
+        sln.production_flow = production_flow[['Period ID', 'Production Quantity', 'Inventory Quantity']]
+
+        # populate costs table
+        prod_cost = dat.costs.merge(production_flow, on='Period ID', how='left')
+        prod_cost['Production Cost'] = prod_cost['Production Quantity'] * prod_cost['Production Cost']
+        prod_cost['Inventory Cost'] = prod_cost['Inventory Quantity'] * prod_cost['Inventory Cost']
+        prod_cost['Total Cost'] = prod_cost['Production Cost'] + prod_cost['Inventory Cost']
+        prod_cost = prod_cost.round({'Production Cost': 2, 'Inventory Cost': 2, 'Total Cost': 2})
+        prod_cost = prod_cost.astype({'Period ID': int, 'Production Cost': 'Float64', 'Inventory Cost': 'Float64',
+                                      'Total Cost': 'Float64'})
+        prod_cost.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID'
+        sln.costs = prod_cost[['Period ID', 'Production Cost', 'Inventory Cost', 'Total Cost']]
+    return sln
+
+
 def solve(dat):
     """
     Main function of pastesian, from the input data it optimizes the system and returns a PanDat object.
@@ -136,36 +168,6 @@ def solve(dat):
         print(f'Model is not optimal. Status: {status}')
     # endregion
 
-    sln = output_schema.PanDat()
-
-    # region Populate output schema
-    if x_sol:
-        x_df = pd.DataFrame(x_sol, columns=['Period ID', 'Production Quantity'])
-        s_df = pd.DataFrame(s_sol, columns=['Period ID', 'Inventory Quantity'])
-
-        # Ordering the above DataFrames by increasing 'Period ID' number, more convenient for retrieving
-        x_df.sort_values(axis=0, by='Period ID', inplace=True)
-        s_df.sort_values(axis=0, by='Period ID', inplace=True)
-
-        # populate production_flow table
-        production_flow = x_df.merge(s_df, on='Period ID', how='right')
-        production_flow.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID', more
-        # convenient for retrieving
-
-        production_flow = production_flow.astype({'Period ID': int, 'Production Quantity': 'Float64',
-                                                  'Inventory Quantity': 'Float64'})
-        sln.production_flow = production_flow[['Period ID', 'Production Quantity', 'Inventory Quantity']]
-
-        # populate costs table
-        prod_cost = dat.costs.merge(production_flow, on='Period ID', how='left')
-        prod_cost['Production Cost'] = prod_cost['Production Quantity'] * prod_cost['Production Cost']
-        prod_cost['Inventory Cost'] = prod_cost['Inventory Quantity'] * prod_cost['Inventory Cost']
-        prod_cost['Total Cost'] = prod_cost['Production Cost'] + prod_cost['Inventory Cost']
-        prod_cost = prod_cost.round({'Production Cost': 2, 'Inventory Cost': 2, 'Total Cost': 2})
-        prod_cost = prod_cost.astype({'Period ID': int, 'Production Cost': 'Float64', 'Inventory Cost': 'Float64',
-                                      'Total Cost': 'Float64'})
-        prod_cost.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID'
-        sln.costs = prod_cost[['Period ID', 'Production Cost', 'Inventory Cost', 'Total Cost']]
-    # endregion
+    sln = populate_output_schema(x_sol, s_sol, dat)
 
     return sln
