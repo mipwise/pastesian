@@ -19,7 +19,8 @@ def action_update_demand(dat):
     dat : PanDat
         A PanDat object containing the input data with updated 'Demand' field from 'demand.csv' table.
     """
-    demand = dat.demand.copy()
+    new_dat = input_schema.copy_pan_dat(dat)
+    demand = new_dat.demand.copy()
     multiplier = input_schema.create_full_parameters_dict(dat)['Production Capacity']
     demand['Demand'] = multiplier * demand['Demand']
 
@@ -27,5 +28,5 @@ def action_update_demand(dat):
     demand = demand.round({'Demand': 0})
     demand = demand.astype({'Demand': int})
 
-    dat.demand = demand
-    return dat
+    new_dat.demand = demand
+    return new_dat
