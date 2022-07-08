@@ -1,10 +1,10 @@
 """
 Module to run unit tests for pastesian package (which requires the installation of the `unittest` package).
 
-To run this in the command-line, use `python -m unittest test_pastesian.py`.
+To run this in the command-line, use `python -m unittest testing_pastesian.py`.
 Alternatively, to get reports on how much of the code has been covered, use the `coverage` package through these
 three commands (which requires the installation of the `coverage` package):
-- `coverage run test_pastesian.py`
+- `coverage run testing_pastesian.py`
 - `coverage report`
 - `coverage html`
 """
