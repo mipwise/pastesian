@@ -58,6 +58,25 @@ def create_optimization_parameters(dat):
 
 
 def populate_output_schema(x_sol, s_sol, dat):
+    """
+    Create the PanDat object containing the output of the optimization.
+
+    This function will be called inside the solve() function below, after the optimization took place.
+
+    Parameters
+    ----------
+    x_sol : list
+        A list containing pairs of (key, value) for all keys of the "x" variable, with corresponding optimal values.
+    s_sol : list
+        A list containing pairs of (key, value) for all keys of the "s" variable, with corresponding optimal values.
+    dat : PanDat
+        PanDat object which is compatible with the input_schema and contains the input data.
+
+    Returns
+    -------
+    sln : PanDat
+        PanDat object containing the output data from the optimization model, compatible with the output schema.
+    """
     sln = output_schema.PanDat()
     if x_sol:
         x_df = pd.DataFrame(x_sol, columns=['Period ID', 'Production Quantity'])
