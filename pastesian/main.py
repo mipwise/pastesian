@@ -4,17 +4,35 @@ import pandas as pd
 from pastesian.utils import check_each_period_id_column
 
 
-def solve(dat):
+def create_optimization_parameters(dat):
     """
-    Main function of pastesian, from the input data it optimizes the system and return output tables.
+    Reads data from PanDat object (containing the input data) and creates optimization parameters.
 
-    :param dat: PanDat object containing the input data.
+    The function also checks one data integrity issue: 'costs' and 'demand' tables must have the same 'Period ID'
+    column, which will be used to create the parameter "I".
 
-    :return: sln: PanDat object containing the output data.
+    Parameters
+    ----------
+    dat : PanDat
+        PanDat object which is compatible with the input_schema and contains the input data. It will be used to
+        create the optimization parameters.
+
+    Returns
+    -------
+    d : dict
+        A dictionary structured as {period_id: demand}
+    pc : dict
+        A dictionary structured as {period_id: production_cost}
+    ic : dict
+        A dictionary structured as {period_id: inventory_cost}
+    I : list
+        A list containing the 'Period ID' values
+
+    Raises
+    ------
+    ValueError
+        When 'demand' and 'costs' tables from dat object have different 'Period ID' columns, regardless of order.
     """
-    # region Prepare optimization parameters
-    check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
-
     d = dict(zip(dat.demand['Period ID'], dat.demand['Demand']))  # dict: {period_id: demand}
     pc = dict(zip(dat.costs['Period ID'], dat.costs['Production Cost']))  # dict: {period_id: production_cost}
     ic = dict(zip(dat.costs['Period ID'], dat.costs['Inventory Cost']))  # dict: {period_id: inventory_cost}
@@ -36,12 +54,89 @@ def solve(dat):
     # could also have used dat.costs['Period ID'] since the above verification ensure they're the same, except possibly
     # for ordering.
 
-    # endregion
+    return d, pc, ic, I
+
+
+def populate_output_schema(x_sol, s_sol, dat):
+    """
+    Create the PanDat object containing the output of the optimization.
+
+    This function will be called inside the solve() function below, after the optimization took place.
+
+    Parameters
+    ----------
+    x_sol : list
+        A list containing pairs of (key, value) for all keys of the "x" variable, with corresponding optimal values.
+    s_sol : list
+        A list containing pairs of (key, value) for all keys of the "s" variable, with corresponding optimal values.
+    dat : PanDat
+        PanDat object which is compatible with the input_schema and contains the input data.
+
+    Returns
+    -------
+    sln : PanDat
+        PanDat object containing the output data from the optimization model, compatible with the output schema.
+    """
+    sln = output_schema.PanDat()
+    if x_sol:
+        x_df = pd.DataFrame(x_sol, columns=['Period ID', 'Production Quantity'])
+        s_df = pd.DataFrame(s_sol, columns=['Period ID', 'Inventory Quantity'])
+
+        # Ordering the above DataFrames by increasing 'Period ID' number, more convenient for retrieving
+        x_df.sort_values(axis=0, by='Period ID', inplace=True)
+        s_df.sort_values(axis=0, by='Period ID', inplace=True)
+
+        # populate production_flow table
+        production_flow = x_df.merge(s_df, on='Period ID', how='right')
+        production_flow.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID', more
+        # convenient for retrieving
+
+        production_flow = production_flow.astype({'Period ID': int, 'Production Quantity': 'Float64',
+                                                  'Inventory Quantity': 'Float64'})
+        sln.production_flow = production_flow[['Period ID', 'Production Quantity', 'Inventory Quantity']]
+
+        # populate costs table
+        prod_cost = dat.costs.merge(production_flow, on='Period ID', how='left')
+        prod_cost['Production Cost'] = prod_cost['Production Quantity'] * prod_cost['Production Cost']
+        prod_cost['Inventory Cost'] = prod_cost['Inventory Quantity'] * prod_cost['Inventory Cost']
+        prod_cost['Total Cost'] = prod_cost['Production Cost'] + prod_cost['Inventory Cost']
+        prod_cost = prod_cost.round({'Production Cost': 2, 'Inventory Cost': 2, 'Total Cost': 2})
+        prod_cost = prod_cost.astype({'Period ID': int, 'Production Cost': 'Float64', 'Inventory Cost': 'Float64',
+                                      'Total Cost': 'Float64'})
+        prod_cost.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID'
+        sln.costs = prod_cost[['Period ID', 'Production Cost', 'Inventory Cost', 'Total Cost']]
+    return sln
+
+
+def solve(dat):
+    """
+    Main function of pastesian, from the input data it optimizes the system and returns a PanDat object.
+
+    Parameters
+    ----------
+    dat : PanDat
+        PanDat object which is compatible with the input_schema and contains the input data.
+
+    Returns
+    -------
+    sln : PanDat
+        A PanDat object containing the output data, compatible with the output schema.
+
+    Raises
+    ------
+    ValueError
+        Two possible cases: 1) when an invalid 'Period ID' column is found, that is, when one table from dat object (
+        input data) contains a 'Period ID' column with non-integer values or missing integer values, accordingly to
+        the check_each_period_id_column function; 2) when 'demand' and 'costs' tables from dat object have different
+        'Period ID' columns, regardless of order, accordingly to create_optimization_parameters function.
+    """
+    check_each_period_id_column(dat)  # verify that each 'Period ID' column is valid
+    d, pc, ic, I = create_optimization_parameters(dat)
 
     # region Build optimization model
     mdl = pulp.LpProblem('Pastesian', sense=pulp.LpMinimize)
-    x = pulp.LpVariable.dicts(indexs=I, cat=pulp.LpContinuous, lowBound=0.0, name='x')  # Production quantities
-    s = pulp.LpVariable.dicts(indexs=I, cat=pulp.LpContinuous, lowBound=0.0, name='s')  # Storage quantities
+    x = pulp.LpVariable.dicts(indices=I, cat=pulp.LpContinuous, lowBound=0.0, name='x')  # Production quantities
+    s = pulp.LpVariable.dicts(indices=I, cat=pulp.LpContinuous, lowBound=0.0, name='s')  # Storage quantities
 
     parameters = input_schema.create_full_parameters_dict(dat)
 
@@ -62,7 +157,6 @@ def solve(dat):
     # endregion
 
     # region Capacity constraints
-    # TODO: think about varying capacities through periods. They should come with input data
     prod_capacity = parameters['Production Capacity']
     if prod_capacity != -1:
         for i in I:
@@ -93,38 +187,6 @@ def solve(dat):
         print(f'Model is not optimal. Status: {status}')
     # endregion
 
-    sln = output_schema.PanDat()
-
-    # region Populate output schema
-    if x_sol:
-        x_df = pd.DataFrame(x_sol, columns=['Period ID', 'Production Quantity'])
-        s_df = pd.DataFrame(s_sol, columns=['Period ID', 'Inventory Quantity'])
-
-        # Ordering the above DataFrames by increasing 'Period ID' number, more convenient for retrieving
-        x_df.sort_values(axis=0, by='Period ID', inplace=True)
-        s_df.sort_values(axis=0, by='Period ID', inplace=True)
-
-        # populate production_flow table
-        production_flow = x_df.merge(s_df, on='Period ID', how='right')
-        production_flow.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID', more
-        # convenient for retrieving
-
-        # production_flow = production_flow.merge(dat.time_periods[['Period ID', 'Time Period']], on='Period ID',
-        #                                         how='left')
-        production_flow = production_flow.astype({'Period ID': int, 'Production Quantity': 'Float64',
-                                                  'Inventory Quantity': 'Float64'})
-        sln.production_flow = production_flow[['Period ID', 'Production Quantity', 'Inventory Quantity']]
-
-        # populate costs table
-        prod_cost = dat.costs.merge(production_flow, on='Period ID', how='left')
-        prod_cost['Production Cost'] = prod_cost['Production Quantity'] * prod_cost['Production Cost']
-        prod_cost['Inventory Cost'] = prod_cost['Inventory Quantity'] * prod_cost['Inventory Cost']
-        prod_cost['Total Cost'] = prod_cost['Production Cost'] + prod_cost['Inventory Cost']
-        prod_cost = prod_cost.round({'Production Cost': 2, 'Inventory Cost': 2, 'Total Cost': 2})
-        prod_cost = prod_cost.astype({'Period ID': int, 'Production Cost': 'Float64', 'Inventory Cost': 'Float64',
-                                      'Total Cost': 'Float64'})
-        prod_cost.sort_values(axis=0, by='Period ID', inplace=True)  # Ordering by increasing 'Period ID'
-        sln.costs = prod_cost[['Period ID', 'Production Cost', 'Inventory Cost', 'Total Cost']]
-    # endregion
+    sln = populate_output_schema(x_sol, s_sol, dat)
 
     return sln
